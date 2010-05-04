@@ -7,10 +7,10 @@
 
 process([Login], #request{auth = Auth, ip = IP}) ->
     case get_auth(Auth) of
-	{"systemuser", "example.com"} ->
+	{"admin", "vix"} ->
 	    {201, [], bind(Login, IP)};
 	_ ->
-	    {401, [{"WWW-Authenticate", "basic realm=\"example.com\""}],"Unauthorized"}
+	    {401, [{"WWW-Authenticate", "basic realm=\"vix\""}],"Unauthorized"}
     end;
 
 process(_LocalPath, _Request) ->
@@ -19,14 +19,14 @@ process(_LocalPath, _Request) ->
 bind(Login, IP) ->
     Rid = list_to_integer(randoms:get_string()),
     Rid1 = integer_to_list(Rid + 1),
-    {xmlelement, "body", Attrs1, _} = process_request("<body rid='"++Rid1++"' xmlns='http://jabber.org/protocol/httpbind' to='example.com' xml:lang='en' wait='60' hold='1' window='5' content='text/xml; charset=utf-8' ver='1.6' xmpp:version='1.0' xmlns:xmpp='urn:xmpp:xbosh'/>", IP),
+    {xmlelement, "body", Attrs1, _} = process_request("<body rid='"++Rid1++"' xmlns='http://jabber.org/protocol/httpbind' to='vix' xml:lang='en' wait='60' hold='1' window='5' content='text/xml; charset=utf-8' ver='1.6' xmpp:version='1.0' xmlns:xmpp='urn:xmpp:xbosh'/>", IP),
     {value, {_, Sid}} = lists:keysearch("sid", 1, Attrs1),
     {value, {_, AuthID}} = lists:keysearch("authid", 1, Attrs1),
     Rid2 = integer_to_list(Rid + 2),
     Auth = base64:encode_to_string(AuthID++[0]++Login++[0]++"backdoor_password"),
     process_request("<body rid='"++Rid2++"' xmlns='http://jabber.org/protocol/httpbind' sid='"++Sid++"'><auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl' mechanism='PLAIN'>"++Auth++"</auth></body>", IP),
     Rid3 = integer_to_list(Rid + 3),
-    process_request("<body rid='"++Rid3++"' xmlns='http://jabber.org/protocol/httpbind' sid='"++Sid++"' to='example.com' xml:lang='en' xmpp:restart='true' xmlns:xmpp='urn:xmpp:xbosh'/>", IP),
+    process_request("<body rid='"++Rid3++"' xmlns='http://jabber.org/protocol/httpbind' sid='"++Sid++"' to='vix' xml:lang='en' xmpp:restart='true' xmlns:xmpp='urn:xmpp:xbosh'/>", IP),
     Rid4 = integer_to_list(Rid + 4),
     {_,_,_,[{_,_,_,[{_,_,_,[{_,_,_,[{_,SJID}]}]}]}]} = process_request("<body rid='"++Rid4++"' xmlns='http://jabber.org/protocol/httpbind' sid='"++Sid++"'><iq type='set'><bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'/></iq></body>", IP),
     Rid5 = integer_to_list(Rid + 5),
