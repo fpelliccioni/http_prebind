@@ -7,10 +7,10 @@
 
 process([Login], #request{auth = Auth, ip = IP}) ->
     case get_auth(Auth) of
-	{"admin", "vix"} ->
-	    {201, [], bind(Login, IP)};
-	_ ->
-	    {401, [{"WWW-Authenticate", "basic realm=\"vix\""}],"Unauthorized"}
+  {"admin", "vix"} ->
+      {201, [], bind(Login, IP)};
+  _ ->
+      {401, [{"WWW-Authenticate", "basic realm=\"vix\""}],"Unauthorized"}
     end;
 
 process(_LocalPath, _Request) ->
@@ -51,6 +51,6 @@ get_auth(Auth) ->
                             unauthorized
                     end
             end;
-	_ ->
+  _ ->
             unauthorized
     end.
