@@ -24,7 +24,8 @@ desc "build the beam file"
 task :build do
   begin
     puts `mkdir -p ebin` # perhaps the ebin folder doesn't yet exist?
-    puts `erl -make ` if File.stat(File.getpwd + "Emakefile")
+    #puts `erl -make ` if File.stat(File.getpwd + "Emakefile")
+    puts `erl -make ` if File.stat(Dir.getwd + "/Emakefile")
   rescue
     puts "Emakefile not found, you should run rake configure"
   end
