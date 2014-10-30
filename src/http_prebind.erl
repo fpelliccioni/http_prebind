@@ -1,8 +1,8 @@
 -module(http_prebind).
 -author('andy@automattic.com').
--include("jlib.hrl").
--include("ejabberd_http.hrl").
--include("ejabberd.hrl").
+-include("/root/dev/ejabberd/include/jlib.hrl").
+-include("/root/dev/ejabberd/include/ejabberd_http.hrl").
+-include("/root/dev/ejabberd/include/ejabberd.hrl").
 -export([process/2]).
 
 process([Login], #request{auth = Auth, ip = IP}) ->
@@ -23,11 +23,11 @@ bind(Login, IP) ->
   Rid1 = integer_to_list(Rid + 1),
   {xmlelement, "body", Attrs1, _} = process_request("<body rid='"++Rid1++"' xmlns='http://jabber.org/protocol/httpbind' to='EJABBERD_DOMAIN' xml:lang='en' wait='60' hold='1' window='5' content='text/xml; charset=utf-8' ver='1.6' xmpp:version='1.0' xmlns:xmpp='urn:xmpp:xbosh'/>", IP),
 
-  # gets the Session ID and Auth Id from the auth request
+  % gets the Session ID and Auth Id from the auth request
   {value, {_, Sid}} = lists:keysearch("sid", 1, Attrs1),
   {value, {_, AuthID}} = lists:keysearch("authid", 1, Attrs1),
 
-  # this is the base64 auth sent to ejabberd
+  % this is the base64 auth sent to ejabberd
   Rid2 = integer_to_list(Rid + 2),
   Auth = base64:encode_to_string(AuthID++[0]++Login++[0]++"AUTH_PASSWORD"),
   process_request("<body rid='"++Rid2++"' xmlns='http://jabber.org/protocol/httpbind' sid='"++Sid++"'><auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl' mechanism='PLAIN'>"++Auth++"</auth></body>", IP),
